@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "flats" ALTER COLUMN "postedBy" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "userProfiles" ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;

@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+model User {
+  id          String        @id @unique @default(uuid())
+  name        String
+  email       String        @unique
+  password    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  bookings    Booking[]
+  userProfile UserProfile[]
+  role        Role          @default(USER)
+  flats       Flat[]
+
+  @@map("users")
+}
+
+model Flat {
+  id                   String   @id @default(uuid())
+  squareFeet           Int
+  imageLink            String   @default("")
+  totalBedrooms        Int
+  totalRooms           Int
+  utilitiesDescription String
+  location             String
+  description          String
+  rent                 Int
+  availability         Boolean  @default(true)
+  advanceAmount        Int
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  postedBy             String
+  user                 User     @relation(fields: [postedBy], references: [id])
+  bookings             Booking[]
+
+  @@map("flats")
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  flat      Flat          @relation(fields: [flatId], references: [id])
+  flatId    String
+  user      User          @relation(fields: [userId], references: [id])
+  userId    String
+  status    BookingStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("bookings")
+}
+
+model UserProfile {
+  id String @id @default(uuid())
+
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique
+  bio        String?
+  profession String?
+  address    String?
+  contact String? @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+
+  @@map("userProfiles")
+}
+
+enum BookingStatus {
+  PENDING
+  BOOKED
+  REJECTED
+}
