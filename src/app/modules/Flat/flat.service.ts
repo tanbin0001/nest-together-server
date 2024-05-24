@@ -45,7 +45,15 @@ const getAllFlats = async (queryParams: any) => {
         where: filters,
         orderBy,
         skip,
-        take: validatedLimit 
+        take: validatedLimit ,
+        include: {
+          user: {
+              select: {
+                  id: true,
+                  name: true,  
+              },
+          },
+      },
     });
 
     const totalCount = result.length;
