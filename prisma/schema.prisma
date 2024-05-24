@@ -14,11 +14,17 @@ enum Role {
   SUPERADMIN
 }
 
+enum Status {
+  active
+  inactive
+}
+
 model User {
   id          String        @id @unique @default(uuid())
   name        String
   email       String        @unique
   password    String
+  status    Status @default(active)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   bookings    Booking[]
@@ -30,21 +36,21 @@ model User {
 }
 
 model Flat {
-  id                   String   @id @default(uuid())
+  id                   String    @id @default(uuid())
   squareFeet           Int
-  imageLink            String   @default("")
+  imageLink            String    @default("")
   totalBedrooms        Int
   totalRooms           Int
   utilitiesDescription String
   location             String
   description          String
   rent                 Int
-  availability         Boolean  @default(true)
+  availability         Boolean   @default(true)
   advanceAmount        Int
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
   postedBy             String
-  user                 User     @relation(fields: [postedBy], references: [id])
+  user                 User      @relation(fields: [postedBy], references: [id])
   bookings             Booking[]
 
   @@map("flats")
@@ -68,10 +74,12 @@ model UserProfile {
 
   user       User     @relation(fields: [userId], references: [id])
   userId     String   @unique
-  bio        String?
+  role       Role     @default(USER)
+  bio        String?               
   profession String?
   address    String?
-  contact String? @default("")
+  contact    String?  @default("")
+  status    Status @default(active)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
 
