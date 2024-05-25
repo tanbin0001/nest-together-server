@@ -3,9 +3,11 @@ import { jwtHelpers } from "../../../helpars/jwtHelpers";
 import prisma from "../../../shared/prisma";
 import * as bcrypt from 'bcrypt'
 import config from "../../../config";
-import { Secret } from "jsonwebtoken";
+import { JwtPayload, Secret } from "jsonwebtoken";
 import ApiError from "../../errors/ApiError";
 import httpStatus from "http-status";
+import { comparePasswords } from "./passwordMatcher";
+import { hashedPassword } from "../../../helpars/passwordHasher";
  
  
 
@@ -51,8 +53,48 @@ const loginUser = async (payload: {
 };
 
  
+const changePassword = async (
+    token: string  ,
+    payload: any
+): Promise<void> => {
+    const { oldPassword, newPassword } = payload;
+ 
+    const user = jwtHelpers.verifyToken(token, config.jwt.jwt_secret!); 
+ 
+    const isUserExist = await prisma.user.findUnique({
+        where: {
+            id: user?.id,
+             
+        }
+    });
 
+   
+    if (!isUserExist) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
+    }
+
+    // checking old password
+    if (
+        isUserExist.password &&
+        !(await  comparePasswords(oldPassword, isUserExist.password))
+    ) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, 'Old Password is incorrect');
+    }
+
+    const hashPassword = await hashedPassword(newPassword);
+
+    await prisma.user.update({
+        where: {
+            id: isUserExist.id
+        },
+        data: {
+            password: hashPassword,
+         
+        }
+    })
+};
 export const AuthServices = {
     loginUser,
+    changePassword
     
 }

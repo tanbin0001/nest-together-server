@@ -8,6 +8,10 @@ router.post(
     '/login',
     AuthController.loginUser
 );
-
+router.post(
+    '/change-password',
+ 
+    AuthController.changePassword
+);
  
 export const AuthRoutes = router;

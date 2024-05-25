@@ -2,6 +2,8 @@ import { Prisma } from "@prisma/client";
 import prisma from "../../../shared/prisma"
 import { jwtHelpers } from "../../../helpars/jwtHelpers";
 import config from "../../../config";
+import ApiError from "../../errors/ApiError";
+import httpStatus from "http-status";
  
 
 
@@ -98,11 +100,7 @@ const addFlatsIntoDB = async (payload: any, token: string) => {
     });
   
     if (!userExists) {
-      return {
-        success: false,
-        message: 'User does not exist',
-        errorDetails: 'Foreign key constraint failed: User not found',
-      };
+    throw new ApiError(httpStatus.NOT_FOUND,'User does not exist')
     }
   
     const flatData = {
@@ -115,9 +113,7 @@ const addFlatsIntoDB = async (payload: any, token: string) => {
         data: flatData,
       });
       return {
-        success: true, 
-        message: 'Flat created successfully',
-        data: result,
+       result
       };
    
   };
@@ -140,16 +136,35 @@ const updateFlatsIntoDb = async (id: string, payload: any) =>{
     return result
 }
 
-const deleteFlatFromDB = async (id: string)  => {
-    const result = await prisma.flat.delete({
-      where: {
-        id,
-      },
-    });
  
-    return result;
-  };
+const deleteFlatFromDB = async (id: string) => {
+  // Check if flat exists
+  const flatExists = await prisma.flat.findUnique({
+    where: { id },
+  });
 
+  if (!flatExists) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'flat does not exist');
+  }
+
+  console.log(id);
+
+ 
+  await prisma.booking.deleteMany({
+    where: {
+      flatId: id,
+    },
+  });
+
+ 
+  const result = await prisma.flat.delete({
+    where: {
+      id,
+    },
+  });
+ 
+  return result;
+};
 
 export const flatServices = {
     getAllFlats,
