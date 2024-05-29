@@ -35,6 +35,7 @@ const getMyProfile = catchAsync(async (req, res) => {
 const updateProfile = catchAsync(async (req, res) => {
 
     const userTOken = req.headers.authorization;
+    
 
     if (!userTOken) {
         throw new ApiError(httpStatus.FORBIDDEN, 'Unauthorized Access')

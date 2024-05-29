@@ -22,21 +22,23 @@ const getMyProfile = async (userToken: string) => {
             id: decodedToken.id  
         },
         include: {
-            userProfile: true  
-        }
+            userProfile: true,
+            
+        } 
     });
     if(!userProfile) {
         throw new ApiError(httpStatus.NOT_FOUND,"User not found")
     }
  
 
-    return userProfile?.userProfile; 
+    return userProfile; 
 }
 
 
 
 const updateMyProfile =  async (userToken: string,payload:any) => {
     const decodedToken = jwtHelpers.verifyToken(userToken, config.jwt.jwt_secret!);
+console.log(decodedToken);
     
     const isUserMatched = await prisma.user.findUniqueOrThrow({
         where:{
@@ -47,12 +49,13 @@ if(!isUserMatched){
     throw new ApiError(httpStatus.UNAUTHORIZED,'Unauthorized Access')
 }
   // Getting user data
-    const userProfile = await prisma.userProfile.update({
+    const userProfile = await prisma.user.update({
         where: {
-            userId: decodedToken.id  
+            id: decodedToken.id  
         },
         data:payload
     });
+    console.log(userProfile);
 
     return userProfile 
 }
