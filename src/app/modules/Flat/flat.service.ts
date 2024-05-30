@@ -91,6 +91,7 @@ const getAllFlats = async (queryParams: any) => {
 
 
 const addFlatsIntoDB = async (payload: any, token: string) => {
+  console.log(payload);
   const { id: userId } = jwtHelpers.verifyToken(token, config.jwt.jwt_secret!);
 
 
@@ -112,6 +113,7 @@ const addFlatsIntoDB = async (payload: any, token: string) => {
   const result = await prisma.flat.create({
     data: flatData,
   });
+  console.log(result, '================');
   return {
     result
   };
