@@ -10,14 +10,18 @@ const http_status_1 = __importDefault(require("http-status"));
 const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalErrorHandler"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)({ origin: "https://nest-together-client.vercel.app", credentials: true }));
+// app.use(cors({origin:"http://localhost:3000",credentials:true}));
+app.use((0, cors_1.default)({
+    origin: ["https://nest-together-client.vercel.app", "http://localhost:3000"],
+    credentials: true
+}));
 app.use((0, cookie_parser_1.default)());
 //parser
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
     res.send({
-        Message: "nest together server.."
+        Message: "nest together server running.."
     });
 });
 app.use('/api', routes_1.default);
