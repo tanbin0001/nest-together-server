@@ -113,7 +113,7 @@ const addFlatsIntoDB = async (payload: any, token: string) => {
   const result = await prisma.flat.create({
     data: flatData,
   });
-  console.log(result, '================');
+
   return {
     result
   };
