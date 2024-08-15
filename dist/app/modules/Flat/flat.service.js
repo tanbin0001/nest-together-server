@@ -60,6 +60,7 @@ const getAllFlats = (queryParams) => __awaiter(void 0, void 0, void 0, function*
             },
         },
     });
+    console.log(result, '---------------');
     const totalCount = result.length;
     const returnData = {
         meta: {

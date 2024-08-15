@@ -33,7 +33,7 @@ const getAllFlats = async (queryParams: any) => {
   if (availability !== undefined && availability !== '') {
     filters.availability = availability === 'true';
   }
-  let orderBy: Prisma.FlatOrderByWithRelationInput | undefined;
+  let orderBy: Prisma.FlatOrderByWithRelationInput | undefined; 
   if (sortBy) {
     orderBy = { [sortBy]: sortOrder || 'asc' };
   }
@@ -58,6 +58,8 @@ const getAllFlats = async (queryParams: any) => {
     },
   });
 
+
+  console.log(result,'---------------');
   const totalCount = result.length;
 
 
